@@ -3,7 +3,7 @@ class Personne
 
   def initialize(nom)
     @nom = nom
-    @points_de_vie = 100
+    @points_de_vie = 100 + Random.rand(21)
     @en_vie = true
   end
 
@@ -11,7 +11,7 @@ class Personne
     # A faire:
     # - Renvoie le nom et les points de vie si la personne est en vie
     if points_de_vie > 0
-      return nom + " (#{points_de_vie}/100)"
+      return nom + " (#{points_de_vie}/100 pv)"
     # - Renvoie le nom et "vaincu" si la personne a été vaincue
     elsif points_de_vie <= 0
       return nom + " (Vaincu)"
@@ -22,9 +22,11 @@ class Personne
   def attaque(personne)
     # A faire:
     # - Fait subir des dégats à la personne passée en paramètre
-    personne.points_de_vie -= degats
+    hp = degats
+    personne.points_de_vie -= hp
+    puts hp
     # - Affiche ce qu'il s'est passé
-    puts "#{nom} attaque #{personne.nom} qui perd #{degats} points de vie"
+    puts "#{nom} attaque #{personne.nom} qui perd #{hp} points de vie"
     if personne.points_de_vie <= 0
       personne.en_vie = false
     end
@@ -43,7 +45,7 @@ class Joueur < Personne
 
   def initialize(nom)
     # Par défaut le joueur n'a pas de dégats bonus
-    @degats_bonus = 0
+    @degats_bonus = Random.rand(11)
 
     # Appelle le "initialize" de la classe mère (Personne)
     super(nom)
@@ -52,24 +54,26 @@ class Joueur < Personne
   def degats
     # A faire:
     # - Calculer les dégats
-    return @degats_bonus + 10
+    return @degats_bonus + 10 + Random.rand(11)
     # - Affiche ce qu'il s'est passé
   end
 
   def soin
     # A faire:
     # - Gagner de la vie
-    @points_de_vie = points_de_vie + 15
+    pv_de_base = points_de_vie
+    @points_de_vie = points_de_vie + 10 + Random.rand(31)
     # - Affiche ce qu'il s'est passé
-    puts "Mourad a gagné 10 points de vie!"
+    puts "Mourad a gagné #{points_de_vie - pv_de_base} points de vie!"
   end
 
   def ameliorer_degats
     # A faire:
     # - Augmenter les dégats bonus
-    @degats_bonus = degats_bonus + 10
+    @degats_bonus = degats_bonus + 5 + Random.rand(11)
+    puts degats_bonus
     # - Affiche ce qu'il s'est passé
-    puts "Mourad a améliorer son attaque de 10 points"
+    puts "Mourad a améliorer son attaque de #{degats_bonus} points"
   end
 end
 
@@ -77,7 +81,7 @@ class Ennemi < Personne
   def degats
     # A faire:
     # - Calculer les dégats
-    return 3
+    return 5 + Random.rand(6)
   end
 end
 
