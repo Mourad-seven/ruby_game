@@ -10,13 +10,24 @@ class Personne
   def info
     # A faire:
     # - Renvoie le nom et les points de vie si la personne est en vie
+    if points_de_vie > 0
+      return nom + " (#{points_de_vie}/100)"
     # - Renvoie le nom et "vaincu" si la personne a été vaincue
+    elsif points_de_vie <= 0
+      return nom + " (Vaincu)"
+      @en_vie = false
+    end
   end
 
   def attaque(personne)
     # A faire:
     # - Fait subir des dégats à la personne passée en paramètre
+    personne.points_de_vie -= degats
     # - Affiche ce qu'il s'est passé
+    puts "#{nom} attaque #{personne.nom} qui perd #{degats} points de vie"
+    if personne.points_de_vie <= 0
+      personne.en_vie = false
+    end
   end
 
   def subit_attaque(degats_recus)
@@ -41,19 +52,24 @@ class Joueur < Personne
   def degats
     # A faire:
     # - Calculer les dégats
+    return @degats_bonus + 10
     # - Affiche ce qu'il s'est passé
   end
 
   def soin
     # A faire:
     # - Gagner de la vie
+    @points_de_vie = points_de_vie + 15
     # - Affiche ce qu'il s'est passé
+    puts "Mourad a gagné 10 points de vie!"
   end
 
   def ameliorer_degats
     # A faire:
     # - Augmenter les dégats bonus
+    @degats_bonus = degats_bonus + 10
     # - Affiche ce qu'il s'est passé
+    puts "Mourad a améliorer son attaque de 10 points"
   end
 end
 
@@ -61,6 +77,7 @@ class Ennemi < Personne
   def degats
     # A faire:
     # - Calculer les dégats
+    return 3
   end
 end
 
@@ -84,6 +101,9 @@ class Jeu
   def self.est_fini(joueur, monde)
     # A faire:
     # - Déterminer la condition de fin du jeu
+    if monde.ennemis_en_vie == [] || joueur.points_de_vie <= 0
+      return true
+    end
   end
 end
 
@@ -93,6 +113,13 @@ class Monde
   def ennemis_en_vie
     # A faire:
     # - Ne retourner que les ennemis en vie
+    ennemis_vivant = []
+    ennemis.each do |ennemi|
+      if ennemi.points_de_vie > 0
+        ennemis_vivant << ennemi
+      end
+    end
+    return ennemis_vivant
   end
 end
 
@@ -103,13 +130,14 @@ monde = Monde.new
 
 # Ajout des ennemis
 monde.ennemis = [
-  Ennemi.new("Balrog"),
-  Ennemi.new("Goblin"),
-  Ennemi.new("Squelette")
+  Ennemi.new("Tan"),
+  Ennemi.new("Ibra"),
+  Ennemi.new("Vadim"),
+  Ennemi.new("Ali")
 ]
 
 # Initialisation du joueur
-joueur = Joueur.new("Jean-Michel Paladin")
+joueur = Joueur.new("Mourad")
 
 # Message d'introduction. \n signifie "retour à la ligne"
 puts "\n\nAinsi débutent les aventures de #{joueur.nom}\n\n"
@@ -144,10 +172,10 @@ puts "\n\nAinsi débutent les aventures de #{joueur.nom}\n\n"
 
   puts "\nLES ENNEMIS RIPOSTENT !"
   # Pour tous les ennemis en vie ...
-  monde.ennemis_en_vie.each do |ennemi|
-    # ... le héro subit une attaque.
-    ennemi.attaque(joueur)
-  end
+   monde.ennemis_en_vie.each do |ennemi|
+     # ... le héro subit une attaque.
+     ennemi.attaque(joueur)
+   end
 
   puts "\nEtat du héro: #{joueur.info}\n"
 
